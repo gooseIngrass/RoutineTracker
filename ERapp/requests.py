@@ -1,8 +1,8 @@
 
 from sqlalchemy import select, update, delete, func
-from models import async_session, User, Task
+from models import User, Task, Character
 from pydantic import BaseModel, ConfigDict
-
+from database import async_session
 
 
 class TaskSchema(BaseModel):
@@ -25,7 +25,6 @@ async def add_user(tg_id):
         await session.commit()
         await session.refresh(new_user)
         return new_user
-
 
 async def get_tasks(user_id):
     async with async_session() as session:

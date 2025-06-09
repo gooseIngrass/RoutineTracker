@@ -6,8 +6,9 @@ from fastapi import FastAPI, Request
 from fastapi.responses import Response
 from starlette.middleware.cors import CORSMiddleware
 
-from models import init_db
+from database import init_db
 import requests as rq
+
 
 @asynccontextmanager
 async def lifespan(app_: FastAPI):
