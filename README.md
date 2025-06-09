@@ -1,0 +1,7 @@
+Для установки всех необходимых библиотек:
+  Создаем виртуальное окружение
+    python -m venv .venv
+  Активируем его
+    .venv/scripts/activate
+  Устанавливаем все библиотеки командой
+    pip install -r requirements.txt
