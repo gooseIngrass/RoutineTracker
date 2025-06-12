@@ -1,6 +1,5 @@
 
 from contextlib import asynccontextmanager
-
 from pydantic import BaseModel
 from fastapi import FastAPI, Request
 from fastapi.responses import Response
@@ -19,7 +18,7 @@ app = FastAPI(title="To Do App", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://erapp-6a56e.web.app"], 
+    allow_origins=["https://erapp-6a56e.web.app", "http://localhost:5173"], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -37,10 +36,13 @@ class AddTask(BaseModel):
     tg_id: int
     title: str
 
+class AddCharacter(BaseModel):
+    tg_id: int
+    nickname: str
+    charClass: str
 
 class CompleteTask(BaseModel):
     id: int
-
 
 
 @app.get("/api/tasks/{tg_id}")
@@ -48,13 +50,19 @@ async def tasks(tg_id: int):
     user = await rq.add_user(tg_id)
     return await rq.get_tasks(user.id)
 
-
-@app.get("/api/main/{tg_id}")
+@app.get("/api/user/me/{tg_id}")
 async def profile(tg_id: int):
     user = await rq.add_user(tg_id)
     completed_tasks_count = await rq.get_completed_tasks_count(user.id)
-    return {'completedTasks': completed_tasks_count}
+    return {'charId':user.character_id, 'completedTasks': completed_tasks_count} 
 
+@app.post("/api/createChar")
+async def welcome(character: AddCharacter):
+    user = await rq.add_user(character.tg_id)
+    print(character.nickname)
+    await rq.create_character(user.id, character.nickname, character.charClass)
+    
+    return {'status' : 'ok'}
 
 @app.post("/api/add")
 async def add_task(task: AddTask):

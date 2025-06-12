@@ -2,18 +2,23 @@
   <div class="app_container">
 
     <router-view />
+    <Navbar v-if="showNavBar" />
     
-    <Navbar />
-  
   </div>
 </template>
 
 <script>
   import Navbar from './components/Navbar.vue'
+  //import Modal from './components/Modal.vue'
   export default{
     name: 'App',
     components:{
       Navbar
+    },
+    computed:{
+      showNavBar(){
+        return this.$route.path !== '/welcome'
+      }
     }
   }
 </script>

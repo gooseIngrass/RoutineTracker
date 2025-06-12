@@ -11,8 +11,7 @@ class User(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     created_at = mapped_column(Date, default=datetime.today)
     tg_id = mapped_column(BigInteger)
-    
-    character = relationship("Character", back_populates="user", uselist=False)
+    character_id: Mapped[int | None] = mapped_column(ForeignKey('characters.id'))
 
 class Task(Base):
     __tablename__ = 'tasks'
@@ -49,6 +48,5 @@ class Character(Base):
 	
 	avatar_url: Mapped[str | None]
     
-	user = relationship("User", back_populates="character", uselist=False)
      
 	

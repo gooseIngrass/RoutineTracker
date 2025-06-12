@@ -41,7 +41,21 @@
 
 		async mounted(){
 			await this.fetchTasks()
+			try {
+				const tg_user = window.Telegram.WebApp.initDataUnsafe?.user
+				const response = await fetch(`http://127.0.0.1:8000/api/user/me/${tg_user.id}`)
+				const data = await response.json()
+
+				const router = this.$router
+				if (!data.charId) {
+					router.push('/welcome') 
+				}
+			}
+			catch(error){
+				console.log(error)
+			}
 		},
+    
 
 		methods:{
 			async fetchTasks(){
