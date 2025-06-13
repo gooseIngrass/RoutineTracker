@@ -1,3 +1,10 @@
+__pycache__
+README
+script.py.mako
+alembic.ini
+db.sqlite3
+ERfront/epic/.vscode/extensions.json
+ERfront/epic/README.md
 # Logs
 logs
 *.log
@@ -8,6 +15,7 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+migration
 .DS_Store
 dist
 dist-ssr

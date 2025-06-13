@@ -3,17 +3,18 @@
 
     <router-view />
     <Navbar v-if="showNavBar" />
-    
+    <widget-container-modal />
   </div>
 </template>
 
 <script>
   import Navbar from './components/Navbar.vue'
-  //import Modal from './components/Modal.vue'
+  import {container} from "jenesius-vue-modal"
   export default{
     name: 'App',
     components:{
-      Navbar
+      Navbar,
+      WidgetContainerModal: container
     },
     computed:{
       showNavBar(){

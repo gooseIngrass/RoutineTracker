@@ -1,15 +1,27 @@
 <template>
 	<div class="tasks-container">
-		<div class="tasks-header">
-			<input 
-				v-model="newTask"
-				type="text"
-				placeholder="Введите задачу"
-				class="task-input"
-				@keyup.enter="createTask" 
-			/>
-			<button @click="createTask" class="add-button">+</button>
-		</div>
+		<dialog ref="taskDialog">
+			<form @submit.prevent="createTask">
+				<h3>Добавить задачу</h3>
+
+				<label>Название задачи:</label>
+				<input type="text" v-model.trim="newTaskTitle" placeholder="Введите название" required />
+
+				<label>Описание:</label>
+				<textarea v-model.trim="newTaskDescription" placeholder="Введите описание"></textarea>
+
+				<div class="difficulty-buttons">
+				<button type="button" @click="newTaskDifficulty = 'LOW'" :class="{ active: newTaskDifficulty === 'LOW' }">Легко</button>
+				<button type="button" @click="newTaskDifficulty = 'MEDIUM'" :class="{ active: newTaskDifficulty === 'MEDIUM' }">Нормально</button>
+				<button type="button" @click="newTaskDifficulty = 'HIGH'" :class="{ active: newTaskDifficulty === 'HIGH' }">Сложно</button>
+				</div>
+
+				<!-- Кнопка создания -->
+				<button type="submit" class="create-btn">Создать</button>
+				<button type="button" @click="closeDialog">Отмена</button>
+			</form>
+		</dialog>
+		<button @click="this.$refs.taskDialog.show()" class="add-button">+</button>
 
 		<div class="tasks-list">
 			<div
@@ -35,7 +47,10 @@
 		data(){
 			return {
 				tasks:[],
-				newTask: ''
+				newTaskTitle: '',
+				newTaskDescription:'',
+				newTaskDifficulty:'',
+				charId:0
 			}
 		},
 
@@ -43,13 +58,14 @@
 			await this.fetchTasks()
 			try {
 				const tg_user = window.Telegram.WebApp.initDataUnsafe?.user
-				const response = await fetch(`http://127.0.0.1:8000/api/user/me/${tg_user.id}`)
+				const response = await fetch(`http://127.0.0.1:8000/api/user/character/${tg_user.id}`)
 				const data = await response.json()
 
 				const router = this.$router
-				if (!data.charId) {
+				if (!data) {
 					router.push('/welcome') 
 				}
+				this.charId = data.id
 			}
 			catch(error){
 				console.log(error)
@@ -69,7 +85,7 @@
 				}
 			},
 			async createTask(){
-				if(!this.newTask) return
+				if(!this.newTaskTitle) return
 
 				try{
 					const tg_user = window.Telegram.WebApp.initDataUnsafe?.user
@@ -78,7 +94,13 @@
 						headers:{
 							'Content-Type': 'application/json'
 						},
-						body: JSON.stringify({ tg_id:tg_user.id, title: this.newTask })
+
+						body: JSON.stringify({ 
+							tg_id:tg_user.id, 
+							title: this.newTaskTitle,
+							desc: this.newTaskDescription,
+							diff: this.newTaskDifficulty 
+						})
 
 					})
 					if (response.ok){
@@ -98,7 +120,7 @@
 						headers:{
 							'Content-Type': 'application/json'
 						},
-						body: JSON.stringify({ id:taskId })
+						body: JSON.stringify({ task_id:taskId, char_id:this.charId })
 					})
 
 					if (response.ok){
@@ -109,7 +131,14 @@
 				}catch(error){
 					console.log("error", error)
 				}
+			},
+			closeDialog() {
+				this.newTask = ''
+				this.newTaskDescription = ''
+				this.newTaskDifficulty = 'easy'
+				this.$refs.taskDialog.close()
 			}
+
 		}
 	}
 </script>
@@ -180,4 +209,25 @@
 	border-radius: 8px;
 	cursor: pointer;
 }
+
+dialog {
+  border-radius: 10px;
+  padding: 20px;
+  width: 300px;
+}
+
+.difficulty-buttons button {
+  margin: 5px;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.difficulty-buttons button.active {
+  background-color: #007BFF;
+  color: white;
+  border-color: #007BFF;
+}
+
 </style>

@@ -14,7 +14,7 @@ if (process.env.NODE_ENV === 'development') {
 	  WebApp: {
 		initDataUnsafe: {
 		  user: {
-			id: 24,
+			id: 1,
 			first_name: 'Test1',
 			username: 'test_user'
 		  }

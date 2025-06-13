@@ -5,11 +5,6 @@
             <p><strong>ID:</strong> {{ user.id }}</p>
             <p><strong>Имя:</strong> {{ user.name }}</p>
             <p><strong>Выполнено задач:</strong> {{ user.completedTasks }}</p>
-            <button @click="open = true">Открыть модальное окно</button>
-            <div v-if="open" class="modal">
-                <p>Привет из модального окна!</p>
-                <button @click="open = false">Закрыть</button>
-            </div>
         </div>
     </div>
 </template>
@@ -42,21 +37,12 @@
                 }catch(error){
                     console.log(error)
                 }
-            }
+            },
         }
     }
 </script>
 
 <style scoped>
-.modal {
-  background-color: aquamarine;
-  position: fixed;
-  z-index: 999;
-  top: 20%;
-  left: 50%;
-  width: 300px;
-  margin-left: -150px;
-}
 .profile-container{
     flex: 1;
     display: flex;

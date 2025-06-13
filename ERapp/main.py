@@ -35,15 +35,22 @@ async def add_private_network_header(request: Request, call_next):
 class AddTask(BaseModel):
     tg_id: int
     title: str
+    desc: str
+    diff: str
 
 class AddCharacter(BaseModel):
     tg_id: int
     nickname: str
     charClass: str
 
-class CompleteTask(BaseModel):
-    id: int
+class Reward(BaseModel):
+    char_id: int
+    ap: str
+    gold: int
 
+class CompleteTask(BaseModel):
+    task_id: int
+    char_id:int
 
 @app.get("/api/tasks/{tg_id}")
 async def tasks(tg_id: int):
@@ -54,24 +61,31 @@ async def tasks(tg_id: int):
 async def profile(tg_id: int):
     user = await rq.add_user(tg_id)
     completed_tasks_count = await rq.get_completed_tasks_count(user.id)
-    return {'charId':user.character_id, 'completedTasks': completed_tasks_count} 
+    return {'completedTasks': completed_tasks_count} 
+
+@app.get("/api/user/character/{tg_id}")
+async def get_char(tg_id:int):
+    user = await rq.add_user(tg_id)
+    return await rq.char_info(user.id)
 
 @app.post("/api/createChar")
 async def welcome(character: AddCharacter):
     user = await rq.add_user(character.tg_id)
-    print(character.nickname)
     await rq.create_character(user.id, character.nickname, character.charClass)
-    
     return {'status' : 'ok'}
 
 @app.post("/api/add")
 async def add_task(task: AddTask):
     user = await rq.add_user(task.tg_id)
-    await rq.add_task(user.id, task.title)
+    await rq.add_task(user.id, task.title, task.desc, task.diff)
     return {'status': 'ok'}
-
 
 @app.patch("/api/completed")
-async def complete_task(task: CompleteTask):
-    await rq.update_task(task.id)
-    return {'status': 'ok'}
+async def complete_task(reward: CompleteTask):
+    await rq.complete_task(reward.task_id, reward.char_id)
+    return {'char': reward.char_id}
+
+# @app.patch("/api/user/character/reward")
+# async def apply_state(reward: Reward):
+#     await rq.reward(reward.char_id, reward.ap, reward.gold)
+#     return {'GOLD': reward.ap}
