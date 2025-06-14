@@ -38,6 +38,11 @@ class AddTask(BaseModel):
     desc: str
     diff: str
 
+class UpdateChar(BaseModel):
+    char_id: int
+    field: str
+    value: int
+
 class AddCharacter(BaseModel):
     tg_id: int
     nickname: str
@@ -56,6 +61,10 @@ class CompleteTask(BaseModel):
 async def tasks(tg_id: int):
     user = await rq.add_user(tg_id)
     return await rq.get_tasks(user.id)
+
+@app.get("/api/quests/{char_id}")
+async def get_quests(char_id: int):
+    return await rq.get_quests(char_id)
 
 @app.get("/api/user/me/{tg_id}")
 async def profile(tg_id: int):
@@ -85,7 +94,7 @@ async def complete_task(reward: CompleteTask):
     await rq.complete_task(reward.task_id, reward.char_id)
     return {'char': reward.char_id}
 
-# @app.patch("/api/user/character/reward")
-# async def apply_state(reward: Reward):
-#     await rq.reward(reward.char_id, reward.ap, reward.gold)
-#     return {'GOLD': reward.ap}
+@app.patch("/api/user/character/update")
+async def update_char(changes: UpdateChar):
+    await rq.update_char(changes.char_id, changes.field, changes.value)
+    return {'status':'ok'}

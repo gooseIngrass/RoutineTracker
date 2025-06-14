@@ -1,6 +1,6 @@
 
 from sqlalchemy import select, update, delete, func
-from models import User, Task, Character
+from models import User, Task, Character, Quest, UserQuest
 from pydantic import BaseModel, ConfigDict
 from database import async_session
 
@@ -14,6 +14,17 @@ class TaskSchema(BaseModel):
     user: int
     
     model_config = ConfigDict(from_attributes=True)
+
+class QuestSchema(BaseModel):
+    id: int
+    title: str
+    description: str
+    lvl_required: int
+    exp_reward: int
+    gold_reward: int
+
+    model_config = ConfigDict(from_attributes=True)
+    
 
 class CharSchema(BaseModel):
     id:int
@@ -61,6 +72,13 @@ async def char_info(user_id):
 
         serialized_character = CharSchema.model_validate(character).model_dump()
         return serialized_character
+    
+async def update_char(char_id, field, value):
+    async with async_session() as session:
+        await session.execute(update(Character)
+                              .where(Character.id == char_id)
+                              .values(**{field:value}))
+        await session.commit()
 
 async def get_tasks(user_id):
     async with async_session() as session:
@@ -74,6 +92,19 @@ async def get_tasks(user_id):
         
         return serialized_tasks
 
+async def get_quests(char_id):
+    async with async_session() as session:
+        quests = await session.scalars(
+            select(Quest)
+            .outerjoin(UserQuest, (Quest.id == UserQuest.quest_id) & (UserQuest.char_id == char_id))
+            .where(UserQuest.id.is_(None))
+        )
+        
+        serialized_quests = [
+            QuestSchema.model_validate(q).model_dump() for q in quests
+        ]
+
+        return serialized_quests
 
 async def get_completed_tasks_count(user_id):
     async with async_session() as session:

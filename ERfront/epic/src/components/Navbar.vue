@@ -2,6 +2,8 @@
 	<nav class="navbar">
 		<router-link to="/" class="nav-link">Задачи</router-link>
 		<router-link to="/profile" class="nav-link">Профиль</router-link>
+    <router-link to="/dungeon" class="nav-link">Подземелье</router-link>
+    <router-link to="/city" class="nav-link">Город</router-link>
 	</nav>
 </template>
 

@@ -42,6 +42,7 @@
 </template>
 
 <script>
+	import { userStore } from '../../stores/userStore'
 	export default{
 		name: 'TasksView',
 		data(){
@@ -50,7 +51,7 @@
 				newTaskTitle: '',
 				newTaskDescription:'',
 				newTaskDifficulty:'',
-				charId:0
+				store: userStore()
 			}
 		},
 
@@ -65,7 +66,7 @@
 				if (!data) {
 					router.push('/welcome') 
 				}
-				this.charId = data.id
+				this.store.charId = data.id
 			}
 			catch(error){
 				console.log(error)
@@ -120,7 +121,7 @@
 						headers:{
 							'Content-Type': 'application/json'
 						},
-						body: JSON.stringify({ task_id:taskId, char_id:this.charId })
+						body: JSON.stringify({ task_id:taskId, char_id: this.store.charId })
 					})
 
 					if (response.ok){

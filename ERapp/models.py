@@ -36,6 +36,7 @@ class Character(Base):
     charClass: Mapped[str] = mapped_column(default=CharClassEnum.WARRIOR)
     gold: Mapped[int] = mapped_column(default=10, server_default=text('10'))
     ap: Mapped[int] = mapped_column(default=0, server_default=text('0'))
+    active_quest: Mapped[int | None] = mapped_column(ForeignKey('quests.id', ondelete='SET NULL'))
 
     level: Mapped[int] = mapped_column(default=1)
     exp: Mapped[int] = mapped_column(default=0)
@@ -48,5 +49,22 @@ class Character(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id', ondelete='CASCADE'))
     avatar_url: Mapped[str | None] = mapped_column(String(250))
 
+class Quest(Base):
+    __tablename__= 'quests'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    title: Mapped[str] = mapped_column(String(128))
+    description: Mapped[str | None] = mapped_column(String(250))
+    lvl_required:Mapped[int] = mapped_column(default=1)
+
+    exp_reward: Mapped[int]
+    gold_reward: Mapped[int]
+
+class UserQuest(Base):
+    __tablename__ = 'user_quests'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    char_id: Mapped[int] = mapped_column(ForeignKey('characters.id'))
+    quest_id: Mapped[int] = mapped_column(ForeignKey('quests.id'))
      
 	
