@@ -66,6 +66,10 @@ async def tasks(tg_id: int):
 async def get_quests(char_id: int):
     return await rq.get_quests(char_id)
 
+@app.get("/api/user/character/{char_id}/quest")
+async def get_active_quest(char_id:int):
+    return await rq.get_active_quest(char_id)
+
 @app.get("/api/user/me/{tg_id}")
 async def profile(tg_id: int):
     user = await rq.add_user(tg_id)

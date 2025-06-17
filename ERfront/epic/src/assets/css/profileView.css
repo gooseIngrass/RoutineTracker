@@ -1,0 +1,80 @@
+.profile-container {
+    flex: 1;
+    background-color: #fdf6e3;
+    padding: 40px 20px 80px; /* под навбар */
+    font-family: 'Georgia', serif;
+    color: #5a3e2b;
+}
+
+.profile-title {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 40px;
+    color: #4a3d2f;
+    text-shadow: 1px 1px 2px #fff8e8;
+}
+
+.character-card {
+    background-color: #fffdf5;
+    border: 1px solid #c6a579;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    margin: auto;
+    padding: 20px;
+    position: relative;
+}
+
+
+.character-card::after {
+    content: ' ';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    background-image: url('../images/knight.png'); 
+    background-size: contain;
+    border: 2px solid #a97d5a;
+    border-radius: 50%;
+}
+
+/* Блок характеристик */
+.stat-block {
+    margin-top: 20px;
+    padding-top: 10px;
+    border-top: 1px dashed #a97d5a;
+}
+
+.stat-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.stat-name {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.stat-value {
+    font-size: 16px;
+    background-color: #eacfa6;
+    padding: 4px 10px;
+    border-radius: 5px;
+    border: 1px solid #a97d5a;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Значок уровня */
+.level-badge {
+    display: inline-block;
+    background: #a66f45;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 14px;
+    margin-left: 10px;
+}

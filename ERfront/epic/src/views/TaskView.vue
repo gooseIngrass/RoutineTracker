@@ -1,35 +1,12 @@
 <template>
 	<div class="tasks-container">
-		<dialog ref="taskDialog">
-			<form @submit.prevent="createTask">
-				<h3>Добавить задачу</h3>
-
-				<label>Название задачи:</label>
-				<input type="text" v-model.trim="newTaskTitle" placeholder="Введите название" required />
-
-				<label>Описание:</label>
-				<textarea v-model.trim="newTaskDescription" placeholder="Введите описание"></textarea>
-
-				<div class="difficulty-buttons">
-				<button type="button" @click="newTaskDifficulty = 'LOW'" :class="{ active: newTaskDifficulty === 'LOW' }">Легко</button>
-				<button type="button" @click="newTaskDifficulty = 'MEDIUM'" :class="{ active: newTaskDifficulty === 'MEDIUM' }">Нормально</button>
-				<button type="button" @click="newTaskDifficulty = 'HIGH'" :class="{ active: newTaskDifficulty === 'HIGH' }">Сложно</button>
-				</div>
-
-				<!-- Кнопка создания -->
-				<button type="submit" class="create-btn">Создать</button>
-				<button type="button" @click="closeDialog">Отмена</button>
-			</form>
-		</dialog>
-		<button @click="this.$refs.taskDialog.show()" class="add-button">+</button>
-
 		<div class="tasks-list">
 			<div
 				v-for="task in tasks"
 				:key="task.id"
 				class="task-item"
 			>
-				<div class="task-text">
+				<div class="task-text" @click="openTaskDetails(task)">
 					{{ task.title }}
 				</div>
 				<button 
@@ -38,11 +15,46 @@
 				</button>
 			</div>
 		</div>
+		<dialog ref="detailsDialog">
+			<div class="details-dialog-container">
+				<h3>{{ selectedTask.title }}</h3>
+				<p class="details-dialog-description" v-if="selectedTask.description">{{ selectedTask.description }}</p>
+				<button @click="this.$refs.detailsDialog.close()" type="button">Закрыть</button>
+			</div>
+		</dialog>
+
+
+		<dialog ref="taskDialog">
+			<form @submit.prevent="createTask">
+				<div class="task-dialog-container">
+					<h3>Мне нужно</h3>
+
+					<input type="text" v-model.trim="newTaskTitle" placeholder="Заголовок" required />
+
+					<textarea v-model.trim="newTaskDescription" placeholder="Напишите сюда что-нибудь"></textarea>
+
+					<div class="difficulty-buttons">
+						<button type="button" @click="newTaskDifficulty = 'LOW'" :class="{ active: newTaskDifficulty === 'LOW' }">Легко</button>
+						<button type="button" @click="newTaskDifficulty = 'MEDIUM'" :class="{ active: newTaskDifficulty === 'MEDIUM' }">Нормально</button>
+						<button type="button" @click="newTaskDifficulty = 'HIGH'" :class="{ active: newTaskDifficulty === 'HIGH' }">Сложно</button>
+					</div>
+
+					<!-- Кнопка создания -->
+					<div class="create-btn">
+						<button type="submit" @click="this.$refs.taskDialog.close()">ОК</button>
+						<button type="button" @click="closeDialog">Отмена</button>
+					</div>
+				</div>
+			</form>
+		</dialog>
+		
+		<button @click="this.$refs.taskDialog.show()" class="add-button">+</button>
 	</div>
 </template>
 
 <script>
 	import { userStore } from '../../stores/userStore'
+	import '../assets/css/taskView.css'
 	export default{
 		name: 'TasksView',
 		data(){
@@ -51,26 +63,14 @@
 				newTaskTitle: '',
 				newTaskDescription:'',
 				newTaskDifficulty:'',
-				store: userStore()
+				store: userStore(),
+				selectedTask:{}
 			}
 		},
 
 		async mounted(){
 			await this.fetchTasks()
-			try {
-				const tg_user = window.Telegram.WebApp.initDataUnsafe?.user
-				const response = await fetch(`http://127.0.0.1:8000/api/user/character/${tg_user.id}`)
-				const data = await response.json()
-
-				const router = this.$router
-				if (!data) {
-					router.push('/welcome') 
-				}
-				this.store.charId = data.id
-			}
-			catch(error){
-				console.log(error)
-			}
+			await this.store.fetchChar()
 		},
     
 
@@ -121,11 +121,12 @@
 						headers:{
 							'Content-Type': 'application/json'
 						},
-						body: JSON.stringify({ task_id:taskId, char_id: this.store.charId })
+						body: JSON.stringify({ task_id:taskId, char_id: this.store.character.id })
 					})
 
 					if (response.ok){
 						await this.fetchTasks()
+						await this.store.fetchChar()
 					}else {
 						console.error('Ошибка', response.status)
 					}
@@ -134,101 +135,17 @@
 				}
 			},
 			closeDialog() {
-				this.newTask = ''
+				this.newTaskTitle = ''
 				this.newTaskDescription = ''
 				this.newTaskDifficulty = 'easy'
 				this.$refs.taskDialog.close()
+			},
+
+			openTaskDetails(task){
+				this.$refs.detailsDialog.show()
+				this.selectedTask = task
 			}
 
 		}
 	}
 </script>
-
-<style scoped>
-.tasks-container{
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-	padding: 16px;
-	overflow-y: auto;
-}
-
-.tasks-header{
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
-	align-items: center;
-	margin-bottom: 16px;
-}
-
-.task-input{
-	flex: 1;
-	padding: 8px;
-	font-size: 16px;
-	border: 1px solid #ccc;
-	border-radius: 8px;
-	margin-right: 8px;
-}
-
-.add-button{
-	background-color: #007aff;
-	color: white;
-	border: none;
-	font-size: 24px;
-	border-radius: 50%;
-	cursor: pointer;
-	outline: none;
-	height: 40px;
-	width: 40px;
-}
-
-.tasks-list{
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-}
-
-.task-item{
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	background-color: #ffffffcc;
-	padding: 8px 12px;
-	border-radius: 8px;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.task-text{
-	font-size: 16px;
-}
-
-.complete-button{
-	background-color: #4caf50;
-	color: white;
-	border: none;
-	padding: 6px 12px;
-	border-radius: 8px;
-	cursor: pointer;
-}
-
-dialog {
-  border-radius: 10px;
-  padding: 20px;
-  width: 300px;
-}
-
-.difficulty-buttons button {
-  margin: 5px;
-  padding: 6px 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.difficulty-buttons button.active {
-  background-color: #007BFF;
-  color: white;
-  border-color: #007BFF;
-}
-
-</style>

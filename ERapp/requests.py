@@ -30,9 +30,12 @@ class CharSchema(BaseModel):
     id:int
     name:str
     charClass:str
+    active_quest:int
     level:int
     exp:int
     hp:int
+    ap:int
+    gold:int
     strength: int
     intelligence: int
     constitution: int
@@ -105,6 +108,16 @@ async def get_quests(char_id):
         ]
 
         return serialized_quests
+
+async def get_active_quest(char_id):
+    async with async_session() as session:
+        quest = await session.scalar(select(Quest)
+                                     .join(Character, Quest.id == Character.active_quest)
+                                     .where(Character.id == char_id))
+
+        serialized_quest = QuestSchema.model_validate(quest).model_dump()
+
+        return serialized_quest
 
 async def get_completed_tasks_count(user_id):
     async with async_session() as session:

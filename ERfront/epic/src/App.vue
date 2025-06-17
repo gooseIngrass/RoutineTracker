@@ -1,15 +1,15 @@
 <template>
   <div class="app_container">
-
     <router-view />
-    <Navbar v-if="showNavBar" />
     <widget-container-modal />
+    <Navbar v-if="showNavBar" />
   </div>
 </template>
 
 <script>
   import Navbar from './components/Navbar.vue'
   import {container} from "jenesius-vue-modal"
+
   export default{
     name: 'App',
     components:{

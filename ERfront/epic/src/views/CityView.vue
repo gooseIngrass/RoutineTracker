@@ -1,5 +1,5 @@
 <template>
-    <div class="city-container">
+    <div class="guild-hall">
         <div class="quests-list">
 			<div
 				v-for="quest in quests"
@@ -9,13 +9,14 @@
 			>
 				<div class="quest-text">
 					{{ quest.title }}
-                    {{ quest.lvl_required }}
-                    {{ quest.exp_reward }}
-                    {{ quest.gold_reward }}
 				</div>
+                <div class="quest-details">
+                    lvl: {{ quest.lvl_required }} <br/>
+                    Награда: {{ quest.exp_reward }} exp, {{ quest.gold_reward }} g
+                </div>
 			</div>
         </div>
-        <dialog ref="questDialog">
+        <dialog ref="questDialog" class="quest-dialog">
             <div class="dialog-content">
                 <h2>{{ selectedQuest.title }}</h2>
                 <p>{{ selectedQuest.description }}</p>
@@ -30,6 +31,7 @@
 
 <script>
 import { userStore } from '../../stores/userStore'
+import '../assets/css/cityView.css'
 export default{
     name: 'CityView',
     data(){
@@ -47,7 +49,7 @@ export default{
     methods:{
         async fetchQuests(){
             try{
-                const response = await fetch(`http://127.0.0.1:8000/api/quests/${this.store.charId}`)
+                const response = await fetch(`http://127.0.0.1:8000/api/quests/${this.store.character.id}`)
 				const data = await response.json()
                 this.quests = data
             } catch(error){
@@ -64,11 +66,12 @@ export default{
 						},
 
 						body: JSON.stringify({ 
-							char_id:this.store.charId, 
+							char_id:this.store.character.id, 
 							field: 'active_quest',
-                            value: 1
+                            value: this.selectedQuest.id
 						})
 					})
+                this.store.selectedQuest = this.selectedQuest
                 if(response.ok){
                     console.log('Квест взят')
                 }
@@ -91,40 +94,3 @@ export default{
 
 }
 </script>
-
-<style scoped>
-.dialog-content {
-  max-width: 400px;
-}
-
-
-.city-container{
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 16px;
-}
-
-.quests-list{
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-}
-
-.quest-item{
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	background-color: #ffffffcc;
-	padding: 8px 12px;
-	border-radius: 8px;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.quest-text{
-	font-size: 16px;
-}
-
-</style>

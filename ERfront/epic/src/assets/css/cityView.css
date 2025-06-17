@@ -1,0 +1,130 @@
+
+.guild-hall {
+	flex: 1;
+	padding: 20px;
+	background-color: #1e120a;
+	color: #f5deb3;
+	font-family: 'Georgia', serif;
+  }
+  
+
+.guild-title {
+	text-align: center;
+	font-size: 24px;
+	font-weight: bold;
+	margin-bottom: 30px;
+	color: #ffddaa;
+	letter-spacing: 1px;
+	text-shadow: 1px 1px 2px #000;
+}
+
+.quests-list {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	gap: 20px;
+}
+
+.quest-item {
+	background-color: #3e2a1f;
+	border: 2px solid #6b4629;
+	border-radius: 10px;
+	padding: 15px;
+	position: relative;
+	transition: transform 0.2s ease-in-out;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.quest-item:hover {
+	transform: translateY(-5px);
+	box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
+}
+
+.quest-item::before {
+	content: '';
+	position: absolute;
+	top: -10px;
+	left: 20px;
+	width: 12px;
+	height: 12px;
+	background: radial-gradient(circle, #8b6f47 60%, #332211 100%);
+	border-radius: 50%;
+	box-shadow: inset 0 0 5px #553311;
+}
+
+.quest-text {
+	font-size: 16px;
+	color: #f5f5dc;
+	line-height: 1.4;
+}
+
+.quest-details {
+	margin-top: 10px;
+	font-size: 14px;
+	color: #dcb896;
+}
+
+.quest-dialog {
+	background-color: transparent;
+	border: none;
+	box-shadow: none;
+}
+
+.quest-dialog::backdrop {
+	background: rgba(0, 0, 0, 0.7); 
+}
+
+
+.dialog-content {
+	background: #fdf6e3; 
+	border: 2px solid #a97d5a;
+	border-radius: 10px;
+	padding: 20px;
+	max-width: 400px;
+	width: 100%;
+	margin: 20px auto;
+	position: relative;
+	font-family: 'Georgia', serif;
+	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.dialog-content::before {
+	content: '';
+	position: absolute;
+	top: -10px;
+	left: 20px;
+	width: 12px;
+	height: 12px;
+	background: radial-gradient(circle, #b88c5d, #5a3e2b);
+	border-radius: 50%;
+	box-shadow: inset 0 0 5px #332211;
+}
+
+.dialog-content h2 {
+	color: #5a3e2b;
+	font-size: 20px;
+	margin-top: 0;
+}
+
+.dialog-content p {
+	color: #4a3d2f;
+	font-size: 14px;
+	line-height: 1.5;
+}
+
+.dialog-content button {
+	margin-right: 10px;
+	padding: 8px 16px;
+	border: 1px solid #a97d5a;
+	background-color: #eacfa6;
+	color: #5a3e2b;
+	font-weight: bold;
+	border-radius: 6px;
+	cursor: pointer;
+	font-family: inherit;
+	transition: background-color 0.2s ease;
+}
+
+.dialog-content button:hover {
+	background-color: #d6b97d;
+}
+

@@ -1,66 +1,69 @@
 <template>
     <div class="profile-container">
-        <h2>Профиль</h2>
-        <div class="profile-info">
-            <p><strong>ID:</strong> {{ user.id }}</p>
-            <p><strong>Имя:</strong> {{ user.name }}</p>
-            <p><strong>Выполнено задач:</strong> {{ user.completedTasks }}</p>
+        <h1 class="profile-title">Профиль героя</h1>
+
+        <div class="character-card">
+            <h2>{{ character.name }} 
+                <span class="level-badge">Уровень {{ character.level }}</span>
+            </h2>
+
+            <p><strong>Класс:</strong> {{ character.charClass }}</p>
+
+            <div class="stat-block">
+                <div class="stat-line">
+                    <span class="stat-name">HP</span>
+                    <span class="stat-value">{{ character.hp }}</span>
+                </div>
+                <div class="stat-line">
+                    <span class="stat-name">AP</span>
+                    <span class="stat-value">{{ character.ap }}</span>
+                </div>
+                <div class="stat-line">
+                    <span class="stat-name">Золото</span>
+                    <span class="stat-value">{{ character.gold }}</span>
+                </div>
+                <div class="stat-line">
+                    <span class="stat-name">Опыт</span>
+                    <span class="stat-value">{{ character.exp }}</span>
+                </div>
+            </div>
+
+            <div class="stat-block">
+                <h3>Характеристики</h3>
+                <div class="stat-line">
+                    <span class="stat-name">Сила</span>
+                    <span class="stat-value">{{ character.strength }}</span>
+                </div>
+                <div class="stat-line">
+                    <span class="stat-name">Интеллект</span>
+                    <span class="stat-value">{{ character.intelligence }}</span>
+                </div>
+                <div class="stat-line">
+                    <span class="stat-name">Выносливость</span>
+                    <span class="stat-value">{{ character.constitution }}</span>
+                </div>
+                <div class="stat-line">
+                    <span class="stat-name">Восприятие</span>
+                    <span class="stat-value">{{ character.perception }}</span>
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
+    import '../assets/css/profileView.css'
+    import { userStore } from '../../stores/userStore'
     export default{
         name:'ProfileView',
         data(){
             return{
-                user:{
-                    id: '',
-                    name:'',
-                    completedTasks:0
-                },
-                open:false
+                store:userStore(),
+                character:{}
             }
         },
         async mounted(){
-            await this.fetchProfile()
-        },
-        methods:{
-            async fetchProfile(){
-                try{
-                    const tg_user = window.Telegram.WebApp.initDataUnsafe?.user 
-					const response = await fetch(`http://127.0.0.1:8000/api/user/me/${tg_user.id}`)
-					const data = await response.json()
-                    this.user.id = tg_user.id
-                    this.user.name = tg_user.first_name
-                    this.user.completedTasks = data.completedTasks
-                }catch(error){
-                    console.log(error)
-                }
-            },
+            this.character = this.store.character
         }
     }
 </script>
-
-<style scoped>
-.profile-container{
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 16px;
-}
-
-.profile-info{
-    background-color: #ffffffcc;
-    backdrop-filter: blur(8px);
-    padding: 16px;
-    border-radius: 8px;
-    text-align: left;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    margin-top: 16px;
-    width: 100%;
-    max-width: 320px;
-}
-</style>
