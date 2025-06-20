@@ -25,11 +25,9 @@
 </script>
 
 <style scoped>
-.app_container{
+.app_container {
   display: flex;
   flex-direction: column;
-  height: 98vh;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
-  background: linear-gradient(to bottom right, #f0f0f0, #ffffff);
+  min-height: 98vh;
 }
 </style>

@@ -1,11 +1,25 @@
 <template>
     <div class="dungeon-container">
+
+        <dialog ref="rewardDialog" class="reward-dialog-container">
+                        <div class="reward-dialog">
+                            <h2>Результат боя</h2>
+
+                            <p v-if="dungeonStore.battleState.result === 'win'">
+                                🎉 Противник повержен! Вы заработали <span style="color: #ffffff;">{{ quest.exp_reward }}</span> exp.
+                            </p>
+                            <p v-else>
+                                💀 Вы проиграли. Попробуйте снова.
+                            </p>
+
+                            <button @click="resetBattle">Вернуться</button>
+                        </div>
+        </dialog>
         <div v-if="!quest.id">
             <p>Вы еще не выбрали квест</p>
         </div>
 
-        <div v-else-if="!roomResult">
-            <p>Выберите дверь</p>
+        <div v-else-if="!roomResult" class="room-choice-container">
             <button v-for="n in 3" :key="n" @click="enterRoom(n)" class="room-button">
                 Дверь {{ n }}
             </button>
@@ -15,7 +29,7 @@
             <div class="battle-screen">
                 <div style="display: flex; flex-direction: row;">
                     <div class="character">
-                        <img :src="roomResult.player.avatar_url" alt="Персонаж" width="100" />
+                        <img :src="roomResult.player.avatar_url" alt="Персонаж" width="80" height="80"/>
                         <p>{{ userStore.character.name }}</p>
                         <div class="hp-bar-container">
                             <div class="hp-bar" :style="{ width: getHpPercentage(dungeonStore.battleState.playerHp) + '%' }"></div>
@@ -48,11 +62,9 @@
                     </ul>
                 </div>
 
-                <div v-if="dungeonStore.battleState.finished" class="result">
-                    <p v-if="dungeonStore.battleState.result === 'win'" style="color: green;">🎉 Победа! Вы получили награду.</p>
-                    <p v-else style="color: red;">💀 Вы проиграли. Попробуйте снова.</p>
-                    <button @click="resetBattle">Вернуться</button>
-                </div>
+                <!-- <div v-if="dungeonStore.battleState.finished">
+                    
+                </div> -->
             </div>
 
         </div>
@@ -83,7 +95,7 @@ export default{
 
     async beforeUnmount(){//Синхронизируем значение AP с БД
         await this.userStore.updateChar(this.userStore.character.id, 'ap', this.userStore.character.ap)
-        await this.userStore.updateChar(this.userStore.character.id, 'hp', this.userStore.character.hp)
+        await this.userStore.updateChar(this.userStore.character.id, 'hp', this.dungeonStore.battleState.playerHp)
         this.dungeonStore.roomResult = this.roomResult
     },
 
@@ -179,12 +191,15 @@ export default{
                     this.log('Вы победили!')
                 }
                 this.dungeonStore.battleState.finished = true
+                this.$refs.rewardDialog.showModal()
             }
         },
 
         resetBattle(){
             this.roomResult = null
-            this.userStore.updateChar(this.userStore.character.id, 'exp', this.quest.exp_reward)
+            this.$refs.rewardDialog.close()
+            console.log(this.quest.exp_reward)
+            this.userStore.updateChar(this.userStore.character.id, 'exp', this.userStore.character.exp + this.quest.exp_reward)
         },
 
         getApCost(action) {

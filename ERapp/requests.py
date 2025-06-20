@@ -152,10 +152,7 @@ async def complete_task(task_id, char_id):
     async with async_session() as session:
         task = await session.scalar(select(Task).where(Task.id == task_id))
         await session.execute(update(Task).where(Task.id == task_id).values(completed=True))
-        await session.execute(update(Character).where(Character.id == char_id).values(gold=Character.gold+task.gold_reward, ap=Character.ap+task.ap_reward))
+        await session.execute(update(Character)
+                              .where(Character.id == char_id)
+                              .values(gold=Character.gold+task.gold_reward, ap=Character.ap+task.ap_reward))
         await session.commit()
-
-# async def reward(char_id, ap, gold):
-#     async with async_session() as session:
-#         await session.execute(update(Character).where(Character.id == char_id).values(ap=ap, gold=gold))
-#         await session.commit()

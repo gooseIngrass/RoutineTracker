@@ -4,7 +4,7 @@ import TasksView from '../views/TaskView.vue'
 import ProfileView from '../views/ProfileView.vue'
 import WelcomeView from '../views/WelcomeView.vue'
 import DungeonView from '@/views/DungeonView.vue'
-import CityView from '@/views/CityView.vue'
+import GuildView from '@/views/GuildView.vue'
 
 const routes = [
   {
@@ -28,9 +28,9 @@ const routes = [
     component: DungeonView
   },
   {
-    path: '/city',
-    name: 'City',
-    component: CityView
+    path: '/guild',
+    name: 'Guild',
+    component: GuildView
   }
 ]
 

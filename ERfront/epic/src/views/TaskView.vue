@@ -27,7 +27,7 @@
 		<dialog ref="taskDialog">
 			<form @submit.prevent="createTask">
 				<div class="task-dialog-container">
-					<h3>Мне нужно</h3>
+					<h3>Мне нужно...</h3>
 
 					<input type="text" v-model.trim="newTaskTitle" placeholder="Заголовок" required />
 
@@ -48,7 +48,7 @@
 			</form>
 		</dialog>
 		
-		<button @click="this.$refs.taskDialog.show()" class="add-button">+</button>
+		<button @click="this.$refs.taskDialog.show()" class="add-button"></button>
 	</div>
 </template>
 
